@@ -17,5 +17,5 @@ public:
 
 	void edit(int);
 	void deleteContact(int);
-	void update(char* newName, char* newNumer);
+	void update(char*, char*);
 };

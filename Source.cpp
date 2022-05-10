@@ -3,16 +3,18 @@
 #include <string>
 
 #include "Contact.h"
+#include "utilfunc.h"
 
 #define contactNo 20
 
 using namespace std;
+//using namespace utilFunc;
 
 int main() {
 	Contact* list[contactNo];
 	fstream file;
 	string changeLine;
-	int count, option, indexToChange;
+	int count, option, indexToChange, num;
 	int i = 0;
 
 	int number_of_lines = 0;
@@ -27,6 +29,7 @@ int main() {
 			i++;
 		}
 	}
+	file.close();
 
 	do {
 		cout << "\n1) add" << endl << "2) delete" << endl << "3) edit" << endl << "4) print" << endl << "0) EXIT" << endl << "Your option: ";
@@ -40,31 +43,38 @@ int main() {
 		case 2:
 			cout << "Enter the name of the contact you want to be removed: ";
 			cin >> changeLine;
-			if (searchInFile(changeLine, "phoneBook.txt") != -1) {
-			indexToChange = searchInFile(changeLine, "phoneBook.txt") / 3;
+			num = searchInFile(changeLine, "phoneBook.txt");
+			if (num != -1) {
+				indexToChange = num / 3;
 			}
 			else {
 				cout << "Contact not found!\n";
 				break;
 			}
-			cout << indexToChange;
-			i++;
+			for (int j = indexToChange; j <= i-1; j++) {
+				if (j < i) {
+					list[j] = list[j + 1];
+				}
+			}
+			list[i]->~Contact();
+			i--;
+			list[indexToChange]->deleteContact(num);
 			break;
 		case 3:
 			cout << "Enter the name of the contact you want to modify: ";
 			cin >> changeLine;
-			if (searchInFile(changeLine, "phoneBook.txt") != -1) {
-				indexToChange = searchInFile(changeLine, "phoneBook.txt") / 3;
+			num = searchInFile(changeLine, "phoneBook.txt");
+			if (num != -1) {
+				indexToChange = num / 3;
 			}
 			else {
 				cout << "Contact not found!\n";
 				break;
 			}
-			cout << indexToChange;
-			i++;
+			list[indexToChange]->edit(num);
 			break;
 		case 4:
-			cout << endl;
+			cout << "\nThere are " << i << " contacts\n";
 			for (int j = 0; j < i; j++) {
 				list[j]->print();
 			}

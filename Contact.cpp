@@ -1,5 +1,5 @@
 #include "Contact.h"
-#include "util.h"
+#include "utilfunc.h"
 
 #include <iostream>
 #include <fstream>
@@ -7,6 +7,7 @@
 #include <iomanip>
 
 using namespace std;
+
 fstream file;
 
 Contact::Contact() {
@@ -31,6 +32,10 @@ repeatName:
             goto repeatName;
         }
     }
+    if (searchInFile(name, "phoneBook.txt") != -1) {
+        cout << "Contact already exists!" << endl;
+        goto repeatName;
+    }
 repeatNumber:
     cout << "Number: ";
     cin >> this->number;
@@ -44,6 +49,10 @@ repeatNumber:
             cout << "\nInvalid number! Try again" << endl;
             goto repeatNumber;
         }
+    }
+    if (searchInFile(number, "phoneBook.txt") != -1) {
+        cout << "This number is already registered!" << endl;
+        goto repeatNumber;
     }
 
     file.open("phoneBook.txt", ios::app);
@@ -77,30 +86,28 @@ void Contact::addFromFile(int line_nr) {
     file.close();
 }
 
-void Contact::deleteContact(int index) {
+void Contact::deleteContact(int line_no) {
     file.open("phoneBook.txt");
     fstream temp;
-    temp.open("temp.txt");
+    temp.open("temp.txt", ios::app);
 
     string line;
-    int i = 0;
+    int curLine = 1;
     while (getline(file, line))
     {
-        if (i == index || index == 3 * i - 2) {
-            //line.replace(line.find(line), line.length(), "");
-            strcpy_s(name, "");
-            strcpy_s(number, "");
+        if (curLine > 3 && !(line_no >= curLine && line_no <= curLine + 2)) {
             temp << line << endl;
         }
-        i++;
+        curLine++;
     }
     file.close();
     temp.close();
     remove("phoneBook.txt");
-    cout << rename("temp.txt", "phoneBook.txt");
+    rename("temp.txt", "phoneBook.txt");
+    remove("temp.txt");
 }
 
-void Contact::edit(int index) {
+void Contact::edit(int line_no) {
     cout << "Editing contact:" << endl;
     cout << "Name : ";
     cin >> this->name;
@@ -120,17 +127,26 @@ repeat:
     }
 
 
-    string line;
-    int i = 0;
     file.open("phoneBook.txt");
+    fstream temp;
+    temp.open("temp.txt", ios::app);
 
-    while (getline(file, line)) // count all the lines from the file
+    string line;
+    int curLine = 1;
+    while (getline(file, line))
     {
-        if (i == index) {
-            file << "Name: " << name << endl;
-            file << "Number: " << number << endl << endl;
-            file.close();
+        if (!(line_no >= curLine && line_no <= curLine + 2)) {
+            temp << line << endl;
         }
-        i++;
+        else {
+            temp << this->name << endl;
+            temp << this->number << endl << endl;
+        }
+        curLine++;
     }
+    file.close();
+    temp.close();
+    remove("phoneBook.txt");
+    rename("temp.txt", "phoneBook.txt");
+    remove("temp.txt");
 }

@@ -26,7 +26,7 @@
     <ClInclude Include="Contact.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="util.h">
+    <ClInclude Include="utilfunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
