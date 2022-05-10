@@ -1,21 +1,37 @@
 #include "Contact.h"
+#include "util.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <iomanip>
 
 using namespace std;
+fstream file;
 
 Contact::Contact() {
     name[0] = 0;
     number[0] = 0;
-
 }
 
 void Contact::add() {
     cout << "Adding new contact:" << endl;
-    cout << "Name : ";
+    
+repeatName:
+    cout << "Name: ";
     cin >> this->name;
-repeat:
+
+    for (int i = 0; i < strlen(name); i++) {
+        try {
+            if (name[i] < 65 || name[i] > 122 || strlen(name) > 20)
+                throw name[i];
+        }
+        catch (...) {
+            cout << "\nThe name is invalid" << endl;
+            goto repeatName;
+        }
+    }
+repeatNumber:
     cout << "Number: ";
     cin >> this->number;
 
@@ -26,48 +42,49 @@ repeat:
         }
         catch (...) {
             cout << "\nInvalid number! Try again" << endl;
-            goto repeat;
+            goto repeatNumber;
         }
     }
 
-    ofstream phoneBook("phoneBook.txt", ios::app);
-    phoneBook << "Name: " << name << endl;
-    phoneBook << "Number: " << number << endl << endl;
-    phoneBook.close();
+    file.open("phoneBook.txt", ios::app);
+    file << name << endl;
+    file << number << endl << endl;
+    file.close();
 
     cout << "Contact added!" << endl;
 }
 
 void Contact::print() {
-    cout << "Contact Info:" << "\t " << name << "\t\t" << number << endl << endl;
+    cout << setw(20) << name;
+    cout << setw(15) << number << endl;
 }
 
 void Contact::addFromFile(int line_nr) {
-    ifstream phoneBook("phoneBook.txt");
+    file.open("phoneBook.txt");
     string line;
     int i = 1;
-    while (getline(phoneBook, line)) // count all the lines from the file
+
+    while (getline(file, line)) // count all the lines from the file
     {
         if (i == line_nr) {
-            line = line.substr(6, 20);
             strcpy_s(name, line.c_str());
         }
         else if (i == line_nr + 1) {
-            line = line.substr(8, 20);
             strcpy_s(number, line.c_str());
         }
         i++;
     }
-    phoneBook.close();
+    file.close();
 }
 
-void Contact::remove(int index) {
-    ifstream phoneBook("phoneBook.txt");
-    ofstream temp("temp.txt");
+void Contact::deleteContact(int index) {
+    file.open("phoneBook.txt");
+    fstream temp;
+    temp.open("temp.txt");
 
     string line;
     int i = 0;
-    while (getline(phoneBook, line)) // count all the lines from the file
+    while (getline(file, line))
     {
         if (i == index || index == 3 * i - 2) {
             //line.replace(line.find(line), line.length(), "");
@@ -77,8 +94,9 @@ void Contact::remove(int index) {
         }
         i++;
     }
-    phoneBook.close();
-    std::remove("phoneBook.txt");
+    file.close();
+    temp.close();
+    remove("phoneBook.txt");
     cout << rename("temp.txt", "phoneBook.txt");
 }
 
@@ -104,21 +122,15 @@ repeat:
 
     string line;
     int i = 0;
-    ifstream phoneBook("phoneBook.txt");
+    file.open("phoneBook.txt");
 
-    while (getline(phoneBook, line)) // count all the lines from the file
+    while (getline(file, line)) // count all the lines from the file
     {
         if (i == index) {
-            ofstream phoneBook("phoneBook.txt");
-            phoneBook << "Name: " << name << endl;
-            phoneBook << "Number: " << number << endl << endl;
-            phoneBook.close();
+            file << "Name: " << name << endl;
+            file << "Number: " << number << endl << endl;
+            file.close();
         }
         i++;
     }
-}
-
-int Contact::search(char* nameToSeach, Contact* list) {
-    cout << "size: " << sizeof(list);
-    return 1;
 }

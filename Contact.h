@@ -8,8 +8,6 @@ public:
 	Contact();
 	~Contact() {};
 
-	int search(char*, Contact*);
-
 	void add();
 	void addFromFile(int);
 	void print();
@@ -18,5 +16,6 @@ public:
 	char* getNumber() { return this->number; }
 
 	void edit(int);
-	void remove(int);
+	void deleteContact(int);
+	void update(char* newName, char* newNumer);
 };
