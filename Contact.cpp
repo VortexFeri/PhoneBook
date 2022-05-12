@@ -113,7 +113,7 @@ void Contact::deleteContact(int line_no) {
 	int curLine = 1;
 	while (getline(file, line))
 	{
-		if (curLine > 3 && !(line_no >= curLine && line_no <= curLine + 2)) {
+		if (!(curLine >= line_no && curLine <= line_no + 2)) {
 			temp << line << endl;
 		}
 		curLine++;
@@ -124,7 +124,7 @@ void Contact::deleteContact(int line_no) {
 	rename("temp.txt", "phoneBook.txt");
 	remove("temp.txt");
 
-	//cout << "Contact succesfully deleted!" << endl;
+	cout << "Contact succesfully deleted!" << endl;
 }
 
 void Contact::edit(int line_no) {

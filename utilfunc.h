@@ -21,14 +21,3 @@ inline int searchInFile(string st, string fileName) {
 	file.close();
 	return -1;
 }
-
-inline bool isEmpty(string fileName) {
-	int length = -1;
-	fstream file(fileName);
-	file.seekg(0, ios::end); // put the "cursor" at the end of the file
-	length = (int)file.tellg(); // find the position of the cursor
-	file.close();
-	if (length == 0)
-		return true;
-	return false;
-}
