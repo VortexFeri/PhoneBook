@@ -1,92 +1,147 @@
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <vector>
+#include <algorithm>
 
 #include "Contact.h"
-#include "utilfunc.h"
 
-#define contactNo 20
+#include "password.h"
+#include "utils.h"
+#include "menu.h"
 
 using namespace std;
-//using namespace utilFunc;
 
 int main() {
-	Contact* list[contactNo];
+	login();
+	menu();
+
 	fstream file;
-	string changeLine;
-	int count, option, indexToChange, num;
-	int i = 0;
+	vector<Contact*> list;
 
-	int number_of_lines = 0;
 	string line;
+	string contactToSearch;
 
-	file.open("phoneBook.txt");
+	// GET ALL ITEMS ALREADY IN FILE AND STORE THEM IN THE VECTOR
+	/*
+		1. For each line in the file, we construct a new contact
+		2. Assign each construced contact the information found on its particular line
+	*/
+	file.open("book.txt", ios::in);		// 1
 	while (getline(file, line)) {
-		number_of_lines++;
-		if (number_of_lines % 3 == 1) {
-			list[i] = new Contact();
-			list[i]->addFromFile(number_of_lines);
-			i++;
-		}
+		list.push_back(new Contact);
 	}
 	file.close();
 
-	do {
-		cout << "\n1) add" << endl << "2) delete" << endl << "3) edit" << endl << "4) print" << endl << "0) EXIT" << endl << "Your option: ";
-		cin >> option;
-		switch (option) {
-		case 1:
-			list[i] = new Contact();
-			list[i]->add();
-			i++;
+	for (int j = 0; j < list.size(); j++) { // 2
+		file.open("book.txt", ios::in);
+		list[j]->readFromFile(file, j + 1);
+		file.close();
+	}
+	sort(list.begin(), list.end(), sortContactPointers());	// The program automatically sorts the contact list alphabeitcally by name (uppercase first and then lowercase)
+															// This is done by overloading the '<' operator to campare the name memebers of the contacts
+
+	// SWITCH OPTIONS
+	int i;
+	string option;
+
+	while (true) {
+		cin >> option;																// We have multiple possible strings assigned to any particular option
+		switch (getOption(option)) {												// This is achieved with the help of the enumerators defined in "utils.h"
+		case optionValues::add:
+			cout << "\n\t\t\t\t --- ADDING NEW CONTACT ---" << endl;
+
+			addToList(list);											// add a new contact to the list
+			sort(list.begin(), list.end(), sortContactPointers());		// sort the list
+
+			updateFile(list);											// update the file "book.txt"
+
+			menu();
 			break;
-		case 2:
-			cout << "Enter the name of the contact you want to be removed: ";
-			cin >> changeLine;
-			num = searchInFile(changeLine, "phoneBook.txt");
-			if (num != -1) {
-				indexToChange = num / 3;
-			}
-			else {
-				cout << "Contact not found!\n";
+
+		case optionValues::print:
+			displayAll(list);
+			cout << "\n\t\t\tType your next command ('help' for options): ";
+			break;
+
+		case optionValues::edit:
+			cout << "\n\t\t\t\Enter the name of the contact would you like to edit: " << endl;
+			cout << "\n\t\t\t\t";
+			cin.ignore();
+			getline(cin, contactToSearch);
+			i = contactExists(list, contactToSearch);			// Search the list to find there is a contact with the given name
+			if (i != -1) {										// The function returns the index of the found contact or -1 if there is no contact with that name
+				system("cls");
+				cout << endl << endl;
+				list[i]->print();								// Prints the information of the contact before the edit
+				editMenu();										// Displays a new menu, with options to edit different properties of the contact
+				editContact(*list[i]);										// Asks the user what they would like to change and applies the changes
+				sort(list.begin(), list.end(), sortContactPointers());		// Sorts the list again
+
+				updateFile(list);											// Updates the file with the new information
+
+				menu();
 				break;
 			}
-			for (int j = indexToChange; j <= i-1; j++) {
-				if (j < i) {
-					list[j] = list[j + 1];
+			else
+			{
+				cout << "\n\t\t\tThis contact doesn't exist! ";
+				cout << "\n\t\t\tType your next command ('help' for options): ";
+				break;
+			}
+
+		case optionValues::removeC:
+			cout << "\n\t\t\t\tWhich contact would you like to remove?" << endl;
+			cout << "\n\t\t\t\t";
+			cin.ignore();
+			getline(cin, contactToSearch);
+			i = contactExists(list, contactToSearch);											// Checks if the contact actually exists
+			if (i != -1)
+			{
+				system("cls");
+				list[i]->print();																// Prints the found contact
+
+				cout << "\n\n\t\t\t\tAre you sure you want to remove this contact? (y/n): ";
+				cin >> option;
+				if (option == "y")
+				{
+					list.erase(list.begin() + i);												// Deletes the contact stored at the previously returned index
+					sort(list.begin(), list.end(), sortContactPointers());
+
+					updateFile(list);
+					menu();
+					break;
+				}
+				else if (option == "n")
+				{
+					menu();
+					break;
+				}
+				else
+				{
+					cout << "\n\t\t\t\t\t  Invalid option! Try again: ";
+					break;
 				}
 			}
-			list[i]->~Contact();
-			i--;
-			list[indexToChange]->deleteContact(num);
-			break;
-		case 3:
-			cout << "Enter the name of the contact you want to modify: ";
-			cin >> changeLine;
-			num = searchInFile(changeLine, "phoneBook.txt");
-			if (num != -1) {
-				indexToChange = num / 3;
-			}
-			else {
-				cout << "Contact not found!\n";
+			else
+			{
+				cout << "\n\t\t\tThis contact doesn't exist! ";
+				cout << "\n\t\t\tType your next command ('help' for options): ";
 				break;
 			}
-			list[indexToChange]->edit(num);
+			menu();
 			break;
-		case 4:
-			cout << "\nThere are " << i << " contacts\n";
-			for (int j = 0; j < i; j++) {
-				list[j]->print();
-			}
+
+		case optionValues::help:			// Displays the main menu
+			menu();
 			break;
-		case 0: 
-			break;
-		default: 
-			cout << "Invalid option!";
+
+		case optionValues::exitPrg:			// Closes the program
+			system("cls");
+			return 0;
+
+		default:
+			cout << "\n\t\t\t\t\t  Invalid option! Try again: ";
 			break;
 		}
-	} while (option != 0);
-
-	count = i;
-	return 0;
+	}
 }
