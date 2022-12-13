@@ -37,23 +37,29 @@ int main() {
 		list[j]->readFromFile(file, j + 1);
 		file.close();
 	}
-	sort(list.begin(), list.end(), sortContactPointers());	// The program automatically sorts the contact list alphabeitcally by name (uppercase first and then lowercase)
-															// This is done by overloading the '<' operator to campare the name memebers of the contacts
+	// The program automatically sorts the contact list alphabeitcally by name (uppercase first and then lowercase)
+	// This is done by overloading the '<' operator to campare the name memebers of the contacts
+	sort(list.begin(), list.end(), sortContactPointers());
 
 	// SWITCH OPTIONS
 	int i;
 	string option;
 
 	while (true) {
-		cin >> option;																// We have multiple possible strings assigned to any particular option
-		switch (getOption(option)) {												// This is achieved with the help of the enumerators defined in "utils.h"
+		// We have multiple possible strings assigned to any particular option
+		cin >> option;
+		// This is achieved with the help of the enumerators defined in "utils.h"
+		switch (getOption(option)) {
 		case optionValues::add:
 			cout << "\n\t\t\t\t --- ADDING NEW CONTACT ---" << endl;
 
-			addToList(list);											// add a new contact to the list
-			sort(list.begin(), list.end(), sortContactPointers());		// sort the list
+			// add a new contact to the list
+			addToList(list);
+			// sort the list
+			sort(list.begin(), list.end(), sortContactPointers());
 
-			updateFile(list);											// update the file "book.txt"
+			// update the file "book.txt"
+			updateFile(list);
 
 			menu();
 			break;
@@ -68,16 +74,23 @@ int main() {
 			cout << "\n\t\t\t\t";
 			cin.ignore();
 			getline(cin, contactToSearch);
-			i = contactExists(list, contactToSearch);			// Search the list to find there is a contact with the given name
-			if (i != -1) {										// The function returns the index of the found contact or -1 if there is no contact with that name
+			// Search the list to find there is a contact with the given name
+			i = contactExists(list, contactToSearch);
+			// The function returns the index of the found contact or -1 if there is no contact with that name
+			if (i != -1) {
 				system("cls");
 				cout << endl << endl;
-				list[i]->print();								// Prints the information of the contact before the edit
-				editMenu();										// Displays a new menu, with options to edit different properties of the contact
-				editContact(*list[i]);										// Asks the user what they would like to change and applies the changes
-				sort(list.begin(), list.end(), sortContactPointers());		// Sorts the list again
+				// Prints the information of the contact before the edit
+				list[i]->print();
+				// Displays a new menu, with options to edit different properties of the contact
+				editMenu();
+				// Asks the user what they would like to change and applies the changes
+				editContact(*list[i]);
+				// Sorts the list again
+				sort(list.begin(), list.end(), sortContactPointers());
 
-				updateFile(list);											// Updates the file with the new information
+				// Updates the file with the new information
+				updateFile(list);
 
 				menu();
 				break;
@@ -94,17 +107,20 @@ int main() {
 			cout << "\n\t\t\t\t";
 			cin.ignore();
 			getline(cin, contactToSearch);
-			i = contactExists(list, contactToSearch);											// Checks if the contact actually exists
+			// Checks if the contact actually exists
+			i = contactExists(list, contactToSearch);
 			if (i != -1)
 			{
+				// Prints the found contact
+				list[i]->print();
 				system("cls");
-				list[i]->print();																// Prints the found contact
 
 				cout << "\n\n\t\t\t\tAre you sure you want to remove this contact? (y/n): ";
 				cin >> option;
 				if (option == "y")
 				{
-					list.erase(list.begin() + i);												// Deletes the contact stored at the previously returned index
+					// Deletes the contact stored at the previously returned index
+					list.erase(list.begin() + i);
 					sort(list.begin(), list.end(), sortContactPointers());
 
 					updateFile(list);
@@ -131,11 +147,13 @@ int main() {
 			menu();
 			break;
 
-		case optionValues::help:			// Displays the main menu
+		// Displays the main menu
+		case optionValues::help:
 			menu();
 			break;
 
-		case optionValues::exitPrg:			// Closes the program
+		// Closes the program
+		case optionValues::exitPrg:
 			system("cls");
 			return 0;
 

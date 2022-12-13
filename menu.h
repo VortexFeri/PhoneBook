@@ -34,7 +34,7 @@ void editMenu() {
 	cout << "\n\t\t\t\t ==                                              ==";
 	cout << "\n\t\t\t\t ==         4 or 'rn' -> Remove a number         ==";
 	cout << "\n\t\t\t\t ==                                              ==";
-	cout << "\n\t\t\t\t ==      5 or 'adress' -> Change the adress      ==";
+	cout << "\n\t\t\t\t ==      5 or 'address' -> Change the address      ==";
 	cout << "\n\t\t\t\t ==                                              ==";
 	cout << "\n\t\t\t\t ==      0 or 'exit' -> Cancel this action       ==";
 	cout << "\n\t\t\t\t ==                                              ==";

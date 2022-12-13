@@ -6,7 +6,7 @@
 #include "utils.h"
 
 
-using namespace std;
+using std::cout;
 
 Contact::Contact() {
 	name = "\0";
@@ -25,15 +25,17 @@ bool Contact::read() {
 	string temp;
 
 	cout << "\n\t\t\t\t --- ADDING NEW CONTACT ---" << endl;
-	if (!addName()) return false;		// check if the contact already exists
-
-	addNumber(0);						// add the first phone number
+	// check if the contact already exists
+	if (!addName()) return false;
+	// add the first phone number
+	addNumber(0);
 
 	int opt = 0;
 
 	while (true)
 	{
-		cout << "\n\t\t\t\tWould you like to add another number?" << endl;	// prompt the user to add another phone number (max 5)
+		// prompt the user to add another phone number (max 5)
+		cout << "\n\t\t\t\tWould you like to add another number?" << endl;
 		cout << "\t\t\t\t ------ 1 = YES ------ 2 = NO ------" << endl;
 		cout << "\t\t\t\t ";
 		cin >> opt;
@@ -75,7 +77,8 @@ void Contact::edit(string elToEdit) {
 	switch (getEditOption(elToEdit))
 	{
 	case editValues::name:
-		addName();			// call this method to replace the current name
+		// call this method to replace the current name
+		addName();
 		break;
 
 	case editValues::addNumber:
@@ -87,7 +90,8 @@ void Contact::edit(string elToEdit) {
 		cin >> i;
 		if (onlyNumbers(i) && stoi(i) >= 1 && stoi(i) <= numberCount)
 		{
-			addNumber(stoi(i) - 1);			// replace the number at the given position
+			// replace the number at the given position
+			addNumber(stoi(i) - 1);
 		}
 		else
 		{
@@ -109,10 +113,13 @@ void Contact::edit(string elToEdit) {
 			{
 				for (int j = stoi(i); j < numberCount; j++)
 				{
-					numbers[j - 1] = numbers[j];		// move back every number's position starting with the index given by the user
+					// move back every number's position starting with the index given by the user
+					numbers[j - 1] = numbers[j];
 				}
-				numbers[numberCount] = "\0";			// remove the last number
-				numberCount--;							// decrement the number count
+				// remove the last number
+				numbers[numberCount - 1] = "\0";
+				// decrement the number count
+				numberCount--;
 			}
 			else
 			{
@@ -123,7 +130,8 @@ void Contact::edit(string elToEdit) {
 		break;
 
 	case editValues::address:
-		addAddress();			// replace the address
+		// replace the address
+		addAddress();
 		break;
 	}
 }
@@ -208,18 +216,22 @@ bool Contact::addName()
 
 		if (temp[0] >= '0' && temp[0] <= '9')
 		{
-			cout << "\n\t\t\t\tERROR: First character should be a letter! Try again!" << endl;		// make sure the name starts with a non-digit character
+			// make sure the name starts with a non-digit character
+			cout << "\n\t\t\t\tERROR: First character should be a letter! Try again!" << endl;
 			cout << "\t\t\t\tName: ";
 			getline(cin, temp);
 		}
-		else if (invalidCharacter(temp))															// make sure it doesn't contain a "~" character, because it would break the readFromFile function
+		// make sure it doesn't contain a "~" character, because it would break the readFromFile function
+		else if (invalidCharacter(temp))
 		{
 			cout << "\n\t\t\t\tERROR: You entered an invalid character! Try again!" << endl;
 			cout << "\t\t\t\tName: ";
 			getline(cin, temp);
 		}
-		else if (findNameInFile(file, temp) != 0)													// make sure the contact doesn't already exist
-		{																							// if it exists abort the action
+		// make sure the contact doesn't already exist
+		else if (findNameInFile(file, temp) != 0)
+		{
+			// if it exists abort the action
 			file.close();
 			cout << "\n\t\t\t\tERROR: Contact already exists!" << endl;
 			Sleep(1000);
@@ -243,7 +255,8 @@ void Contact::addNumber(int pos) {
 
 	if (numberCount == 5)
 	{
-		cout << "\n\t\t\t\tThe max count of phone numbers is 5!" << endl;							// make sure there is enough room to add another number
+		// make sure there is enough room to add another number
+		cout << "\n\t\t\t\tThe max count of phone numbers is 5!" << endl;
 		cin.get();
 		return;
 	}
@@ -255,20 +268,23 @@ void Contact::addNumber(int pos) {
 
 			if (!onlyNumbers(temp) || invalidCharacter(temp))
 			{
-				cout << "\t\t\t\tERROR: You entered an invalid character! Try again!" << endl;			// make sure it doesn't contain a letter or a "~"
+				// make sure it doesn't contain a letter or a "~"
+				cout << "\t\t\t\tERROR: You entered an invalid character! Try again!" << endl;
 				cout << "\t\t\t\tNumber: ";
 				cin >> temp;
 			}
 			else if (temp.length() != 10)
 			{
 
-				cout << "\t\t\t\tERROR: Numbers needs to be EXACTLY 10 characters long! Try again!" << endl;	// make sure it's exactly 10 digits long
+				// make sure it's exactly 10 digits long
+				cout << "\t\t\t\tERROR: Numbers needs to be EXACTLY 10 characters long! Try again!" << endl;
 				cout << "\t\t\t\tNumber: ";
 				cin >> temp;
 			}
 			else if (numberAlreadyExists(file, temp))
 			{
-				cout << "\t\t\t\tERROR: This number is already registered! Try again!" << endl;			// make sure the number isn't already registered for another contact (searches in file)
+				// make sure the number isn't already registered for another contact (searches in file)
+				cout << "\t\t\t\tERROR: This number is already registered! Try again!" << endl;
 				cout << "\t\t\t\tNumber: ";
 				cin >> temp;
 				file.close();

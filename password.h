@@ -4,32 +4,37 @@
 #include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
+#include <string>
 
 using namespace std;
 
 void login()
 {
-	char password[20], my_password[20] = "password";
-	int i = 0;
+	string password, myPassword = "password";
 	char ch;
 
 	cout << "\n\n\n\n\n\n\n\n\n\t\t\t\t\t *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*";
 	cout << "\n\t\t\t\t\t *~*~*~*   Enter the password  *~*~*~*";
 	cout << "\n\t\t\t\t\t                ";
 
-	do
+	while (true)
 	{
 		ch = _getch();
-		password[i] = ch;
-		if (ch != 27 && ch != 13)
-			_putch('*');
-		else
+		if (ch == 13) {
 			break;
-		i++;
-	} while (i < 19);
-	password[i] = '\0';
+		}
+		else if (ch == 8 && password.length() != 0) {
+			cout << "\b \b";
+			password.pop_back();
+			continue;
+		}
+		else if (ch == 8 && password.length() == 0)
+			continue;
+		password.push_back(ch);
+		cout << "*";
+	}
 
-	if (strcmp(password, my_password) == 0) {
+	if (password == myPassword) {
 
 		cout << "\n\n\n\t\t\t\t\t  .(~*~*~*~*~*~*~*^&^*~*~*~*~*~*~*~).";
 		cout << "\n\t\t\t\t\t  %|                               |%";

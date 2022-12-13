@@ -9,7 +9,8 @@
 
 using namespace std;
 
-inline bool onlyNumbers(string st) {						// Check if the given string has any non-digit characters
+// Check if the given string has any non-digit characters
+inline bool onlyNumbers(string st) {
 	for (int i = 0; i < st.length(); i++) {
 		if (st[i] < '0' || st[i] > '9')
 			return false;
@@ -17,7 +18,8 @@ inline bool onlyNumbers(string st) {						// Check if the given string has any n
 	return true;
 }
 
-inline bool invalidCharacter(string st) {						// Check if the given string has a "~" character
+// Check if the given string has a "~" character
+inline bool invalidCharacter(string st) {
 	for (int i = 0; i < st.length(); i++) {
 		if (st[i] == '~')
 			return true;
@@ -33,7 +35,8 @@ struct sortContactPointers
 	}
 };
 
-enum class optionValues {									// Enum values for the main menu options
+// Enum values for the main menu options
+enum class optionValues {
 	add,
 	print,
 	edit,
@@ -42,7 +45,8 @@ enum class optionValues {									// Enum values for the main menu options
 	exitPrg
 };
 
-inline optionValues getOption(string opt) {												// Return an integer based on a list of strings
+// Return an integer based on a list of strings
+inline optionValues getOption(string opt) {
 	if (opt == "exit" || opt == "0" || opt == "close") return optionValues::exitPrg;
 	if (opt == "add" || opt == "1") return optionValues::add;
 	if (opt == "print" || opt == "2") return optionValues::print;
@@ -51,7 +55,8 @@ inline optionValues getOption(string opt) {												// Return an integer base
 	if (opt == "help" || opt == "5" || opt == "menu") return optionValues::help;
 }
 
-enum class editValues {																	// Edit values for the edit menu
+// Edit values for the edit menu
+enum class editValues {
 	name,
 	addNumber,
 	editNumber,
@@ -61,7 +66,8 @@ enum class editValues {																	// Edit values for the edit menu
 	invalid
 };
 
-inline editValues getEditOption(string opt) {															// Return an integer based on a list of strings
+// Return an integer based on a list of strings
+inline editValues getEditOption(string opt) {
 	if (opt == "exit" || opt == "0" || opt == "close" || opt == "cancel") return editValues::cancel;
 	if (opt == "name" || opt == "1") return editValues::name;
 	if (opt == "an" || opt == "2") return editValues::addNumber;
@@ -71,8 +77,10 @@ inline editValues getEditOption(string opt) {															// Return an integer
 	return editValues::invalid;
 }
 
-inline int findNameInFile(istream& file, string st) {							// Check if the given "name" is found in the file
-	string temp;																// The name is the first substring before a "~" character
+// Check if the given "name" is found in the file
+// The name is the first substring before a "~" character
+inline int findNameInFile(istream& file, string st) {
+	string temp;
 	int curLine = 1;
 	while (getline(file, temp)) {
 		if (temp.substr(0, temp.find("~")) == st) {
@@ -83,30 +91,41 @@ inline int findNameInFile(istream& file, string st) {							// Check if the give
 	return 0;
 }
 
-inline bool numberAlreadyExists(istream& file, string st) {						// Check if the phone number already exists in the file
-	string temp;																// because we can't access the information from a contact by calling another's contact methods
+// Check if the phone number already exists in the file
+// because we can't access the information from a contact by calling another's contact methods
+inline bool numberAlreadyExists(istream& file, string st) {
+	string temp;
 	while (getline(file, temp)) {
-		string numberCount = temp.substr(temp.find("~") + 1, 1);				// Find the Number Count member (immediately after the first "~"
-		string numbers = temp.substr(temp.find("~") + 3, temp.back());			// Make a substring containing every number (the length is given by the Number Count member)
+		// Find the Number Count member (immediately after the first "~"
+		string numberCount = temp.substr(temp.find("~") + 1, 1);
+		// Make a substring containing every number (the length is given by the Number Count member)
+		string numbers = temp.substr(temp.find("~") + 3, temp.back());
 		numbers = numbers.substr(0, 11 * stoi(numberCount));
 
 		for (int i = 0; i < stoi(numberCount); i++) {
-			string curNo = numbers.substr(0, numbers.find("~"));				// Cut out the first number in the string (again, up to the first "~"
+			// Cut out the first number in the string (again, up to the first "~"
+			string curNo = numbers.substr(0, numbers.find("~"));
 			if (curNo == st) {
-				return true;													// Check if it's equal to the given name parameter 
+				// Check if it's equal to the given name parameter 
+				return true;
 			}
 			else {
-				numbers.erase(0, numbers.find("~") + 1);						// If it's not equal, cut the current number from the numbers string and repeat the cycle
+				// If it's not equal, cut the current number from the numbers string and repeat the cycle
+				numbers.erase(0, numbers.find("~") + 1);
 			}
 		}
 	}
 	return false;
 }
 
-inline int contactExists(vector<Contact*> list, string name) {					// Input the list of contacts to check if there is any contact with the given name
-	for (auto i = list.begin(); i != list.end(); i++) {							// Used in the option menu switch
-		if ((*i)->getName() == name) {											// Iterate through every contact and check its name
-			return distance(list.begin(), i);									// Return its index if it's found or -1 otherwise
+// Input the list of contacts to check if there is any contact with the given name
+// Used in the option menu switch
+inline int contactExists(vector<Contact*> list, string name) {
+	// Iterate through every contact and check its name
+	for (auto i = list.begin(); i != list.end(); i++) {
+		if ((*i)->getName() == name) {
+			// Return its index if it's found or -1 otherwise
+			return distance(list.begin(), i);
 		}
 	}
 	return -1;
@@ -115,9 +134,11 @@ inline int contactExists(vector<Contact*> list, string name) {					// Input the 
 //OPTIONS FUNCTIONS
 
 inline void addToList(vector<Contact*>& list) {
-	list.push_back(new Contact);												// Add a new Contact at the end of the vector
+	// Add a new Contact at the end of the vector
+	list.push_back(new Contact);
 	system("cls");
-	int succes = list.back()->read();											// Call the method to read the contact's info (it returns false if the contact is already in the list)
+	// Call the method to read the contact's info (it returns false if the contact is already in the list)
+	int succes = list.back()->read();
 	if (succes) {
 		system("cls");
 		cout << "\n\n\n\n\t\t\t\t ------ CONTACT ADDED SUCCESFULLY ------ ";
@@ -128,13 +149,15 @@ inline void addToList(vector<Contact*>& list) {
 		}
 	}
 	else {
-		list.pop_back();														// If the method returned false remove the contact from the back
+		// If the method returned false remove the contact from the back
+		list.pop_back();
 	}
 
 	std::sort(list.begin(), list.end(), sortContactPointers());
 }
 
-inline void displayAll(vector<Contact*>& list) {								// Print all the contacts using their method
+// Print all the contacts using their method
+inline void displayAll(vector<Contact*>& list) {
 	system("cls");
 
 	for (auto i = list.begin(); i != list.end(); i++) {
@@ -144,7 +167,8 @@ inline void displayAll(vector<Contact*>& list) {								// Print all the contact
 	}
 }
 
-inline int editContact(Contact& contact) {								// Replace the main switch with one for editing a contact
+// Replace the main switch with one for editing a contact
+inline int editContact(Contact& contact) {
 	string option;
 	while (true)
 	{
@@ -158,27 +182,33 @@ inline int editContact(Contact& contact) {								// Replace the main switch wit
 			cout << "\n\t\t\t\t\t  Invalid option! Try again: ";
 			break;
 		default:
-			contact.edit(option);										// If the user typed a valid command, call the edit method with the said command as a parameter
+			// If the user typed a valid command, call the edit method with the said command as a parameter
+			contact.edit(option);
 			return 0;
 		}
 	}
 }
 
-inline void updateFile(vector<Contact*>& list) {						// Update the file after e=any action (addition, edit & removal)
+	// Update the file after e=any action (addition, edit & removal)
+inline void updateFile(vector<Contact*>& list) {
 	fstream temp;
-	temp.open("temp.txt", ios::out);											// Create and open a temporary file
-	for (auto contact = list.begin(); contact != list.end(); contact++) {		// Print all the contact's information in the file
+	// Create and open a temporary file
+	temp.open("temp.txt", ios::out);
+	// Print all the contact's information in the file
+	for (auto contact = list.begin(); contact != list.end(); contact++) {	
 		temp << (*contact)->getName() << "~"
 			<< (*contact)->getCount() << "~";
-		for (int i = 0; i < (*contact)->getCount(); i++)						// Based on the count of phone numbers, write them all
+		// Based on the count of phone numbers, write them all
+		for (int i = 0; i < (*contact)->getCount(); i++)
 			temp << (*contact)->getNumber(i) << "~";
-		temp << (*contact)->getCountry() << "~"									// Write the rest of the information (in this case, the address)
+		// Write the rest of the information (in this case, the address)
+		temp << (*contact)->getCountry() << "~"
 			<< (*contact)->getCity() << "~"
 			<< (*contact)->getStreetName() << "~"
 			<< (*contact)->getStreetNr() << "~" << endl;
 	}
-	temp.close();																// Close the temporary file
-	remove("book.txt");															// Remove the original file and replace it with the temporary one
+	temp.close();	// Close the temporary file
+	remove("book.txt");		// Remove the original file and replace it with the temporary one
 	rename("temp.txt", "book.txt");
-	remove("temp.txt");															// Delete the temp file
+	remove("temp.txt");		// Delete the temp file
 }
